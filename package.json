@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/moribaleta/tictactoa-socket/issues"
   },
-  "homepage": "https://github.com/moribaleta/tictactoa-socket#readme"
+  "homepage": "https://github.com/moribaleta/tictactoa-socket#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socketio": "^1.0.0"
+  }
 }
