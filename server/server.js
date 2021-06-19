@@ -67,7 +67,11 @@ io.on('connection', (socket) => {
         let index = game.users.findIndex((_user) => {
             return _user.id == user.id
         })
-        game.splice(index, 1)
+
+        if (index > -1) {
+            game.users.splice(index, 1)
+        }
+        
         game.session = new Session()
     })
 
