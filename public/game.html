@@ -26,6 +26,7 @@
                     <p>{{index + 1}}. {{user.username}}</p>
                 </li>
             </ul>
+            <button v-on:click="onLogOut()">Log out</button>
             <!-- <ul class="group-list">
                 <li class="group-list-item" v-for="key,index in Object.keys(session.player_spec)" v-if="session.player_spec[key]">
                     <p>Player {{index + 1}}: {{session.player_spec[key].username}}</p>

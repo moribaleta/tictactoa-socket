@@ -63,6 +63,14 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on('removeUser', (user) => {
+        let index = game.users.findIndex((_user) => {
+            return _user.id == user.id
+        })
+        game.splice(index, 1)
+        game.session = new Session()
+    })
+
 
     let userconnected   = new Message()
     userconnected.data  = game.users

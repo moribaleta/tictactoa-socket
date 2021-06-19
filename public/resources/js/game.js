@@ -168,6 +168,12 @@ const app = new Vue({
             this.socket.emit('createSession', this.session)
         },
 
+        onLogOut() {
+            localStorage.setItem('user', '{}')
+            this.socket.emit('removeUser', this.user)
+            window.open("index.html",'_self')
+        }, 
+
         checker() {
             const checker_value = this.session.player_turn // 1, 2
             const check_1 = 3 //1 * this.table_size.col
