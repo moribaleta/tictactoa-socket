@@ -1,7 +1,11 @@
+
+
 <!DOCTYPE html>
 <html>
 
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="resources/js/jquery-3.0.0.min.js"></script>
     <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     </link>
@@ -60,7 +64,7 @@
                 <label>{{getCurrPlayer()}}</label>
 
                 <div class="row entry-row" v-for="table_row, row_index in session.table" :key="row_index">
-                    <div class="col col-xs-3 entry-item" v-for="table_column, column_index in session.table[row_index]"
+                    <div class="col col-xs-4 entry-item" v-for="table_column, column_index in session.table[row_index]"
                         :key="column_index">
                         <!-- button 0 -->
                         <button class="entry-content" v-on:click="onSelect(row_index, column_index)"
