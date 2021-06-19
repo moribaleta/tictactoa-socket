@@ -1,20 +1,52 @@
 <!DOCTYPE html>
 <html>
-    <head></head>
-    <body>
-        <p>Hello World</p>
 
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            let socket = io()
+<head>
+    <script src="resources/js/jquery-3.0.0.min.js"></script>
+    <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    </link>
+    <link href="resources/css/style.css" rel="stylesheet">
+    </link>
+    <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resources/js/vue.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    
+    <style>
+        body {
+            background: #ECEFF1;
+            color: rgba(0, 0, 0, 0.87);
+            font-family: Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            align-items: stretch;
+            justify-content: center;
+            display:flex;
+            flex-direction: column;
+            min-height: 800px;
+            line-height: 20px;
+        }
+    </style>
+</head>
 
-            socket.on("connect", () => {
-                console.log("connected to the server")
-            })
+<body>
+    <div id="app" class="login-input-container">
+        <h2>Welcome</h2>
+        <h1>TictacTo-a</h1>
+        <p>A Simple Tictactoe game</p>
+        
+        <label>Enter your username</label>
+        <input class="input-text" type="text" v-model="username"></input>
+        <button class="input-button" v-on:click="onCreateUser()">Start Game</button>
+        <p>Connected to the Server: {{connected}}</p>
 
-            socket.on('disconnect', () => {
-                console.log("disconnected from the server")
-            })
-        </script>
-    </body>
+        <ul class="group-list">
+            <li class="group-list-item" v-for="user,index in users">
+                <p>{{index + 1}}. {{user.username}}</p>
+            </li>
+        </ul>
+    </div>
+
+    <script src="resources/js/index.js"></script>
+</body>
+
 </html>

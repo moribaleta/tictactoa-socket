@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="resources/js/jquery-3.0.0.min.js"></script>
+    <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    </link>
+    <link href="resources/css/style.css" rel="stylesheet">
+    </link>
+    <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resources/js/vue.js"></script>
+    <script src="resources/js/objects.js"></script>
+    <script src="resources/js/utilities.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <!-- <p>Hello World</p> -->
+    <div id="app" class="container">
+        <h1>Tictacto-a</h1>
+
+        <div class="header-container" v-if="user">
+            <label>{{user.username}}</label>
+            <ul class="group-list">
+                <li class="group-list-item" v-for="user,index in users">
+                    <p>{{index + 1}}. {{user.username}}</p>
+                </li>
+            </ul>
+            <!-- <ul class="group-list">
+                <li class="group-list-item" v-for="key,index in Object.keys(session.player_spec)" v-if="session.player_spec[key]">
+                    <p>Player {{index + 1}}: {{session.player_spec[key].username}}</p>
+                </li>
+            </ul> -->
+        </div>
+
+        <div class="container" v-if="users.length < 2">
+            <label>Still Waiting for 2nd player</label>
+        </div>
+        <div class="container" v-if="users.length >= 2">
+            <div class="input-container" v-if="session.state == 'setplayer'">
+                <label>Toss coin to designate players</label>
+                <p>{{coin}}</p>
+                <button v-on:click="onTossCoin()">Toss Coin</button>
+            </div>
+
+            <div class="input-container" v-if="session.state == 'create'">
+                <div v-if="user.id == session.player_spec[1].id">
+                <input id="input_row" v-model="session.table_size.row" type="number"></input>
+                <input id="input_col" v-model="session.table_size.col" type="number"></input>
+                <button v-on:click="onStartGame()">Start</button>
+                </div>
+                <div v-if="user.id != session.player_spec[1].id">
+                    <p>Waiting for Player 1 to create map</p>
+                </div>
+            </div>
+
+
+            <div class="table-container" v-if="session.table" v-if="session.state == 'playing'">
+                <label>{{getCurrPlayer()}}</label>
+
+                <div class="row entry-row" v-for="table_row, row_index in session.table" :key="row_index">
+                    <div class="col col-xs-3 entry-item" v-for="table_column, column_index in session.table[row_index]"
+                        :key="column_index">
+                        <!-- button 0 -->
+                        <button class="entry-content" v-on:click="onSelect(row_index, column_index)"
+                            v-if="table_column == 0">
+                            <p class="entry-content-label" v-if="table_column > 0">
+                                {{table_column}}
+                            </p>
+                        </button>
+
+                        <!-- button 1 -->
+                        <button class="entry-content entry-player1" v-on:click="onSelect(row_index, column_index)"
+                            v-if="table_column == 1">
+                            <p class="entry-content-label" v-if="table_column > 0">
+                                {{table_column}}
+                            </p>
+                        </button>
+
+                        <!-- button 2 -->
+                        <button class="entry-content entry-player2" v-on:click="onSelect(row_index, column_index)"
+                            v-if="table_column == 2">
+                            <p class="entry-content-label" v-if="table_column > 0">
+                                {{table_column}}
+                            </p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="resources/js/game.js"></script>
+</body>
+
+</html>
