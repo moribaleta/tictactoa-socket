@@ -23,6 +23,38 @@
     <div id="app" class="container">
         <h1>Tictacto-a</h1>
 
+        <button class="input-button" v-on:click="toggleChat(true)">View Chat</button>
+
+        <div id="sidebar" class="sidenav">
+          <button class="input-button" v-on:click="toggleChat(false)">Close Chat</button>
+
+          <!-- TODO CHAT -->
+          
+          <div class="login-input-container">
+          
+          <div class="chat-list">
+            <ul class="list-group">
+              <li v-for="chat,index in session.chat" class="list-group-item"> <p>
+                {{chat.message}}
+              </p>
+              <p>
+                {{ getuser(chat.user_id) ? getuser(chat.user_id).username : chat.user_id}}
+              </p>
+              </li>
+            </ul>
+          </div>
+          
+
+           <input class="input-text" type="text" v-model="input_text">
+           
+           </input>  
+           <button class="input-button" v-on:click="sendmessage()">
+             send message
+           </button>
+
+          </div>
+        </div>
+
         <div class="header-container" v-if="user">
             <label>{{user.username}}</label>
             <ul class="group-list">
@@ -31,13 +63,7 @@
                 </li>
             </ul>
             <button v-on:click="onLogOut()">Log out</button>
-            <!-- <ul class="group-list">
-                <li class="group-list-item" v-for="key,index in Object.keys(session.player_spec)" v-if="session.player_spec[key]">
-                    <p>Player {{index + 1}}: {{session.player_spec[key].username}}</p>
-                </li>
-            </ul> -->
         </div>
-
         <div class="container" v-if="users.length < 2">
             <label>Still Waiting for 2nd player</label>
         </div>
@@ -93,6 +119,7 @@
                 </div>
             </div>
         </div>
+
 
     </div>
 

@@ -120,7 +120,7 @@ class User extends Model {
 /**
  * different state of the game
  */
- GameState = {
+const GameState = {
     setplayer   : "setplayer",
     create      : "create",
     playing     : "playing",
@@ -149,9 +149,10 @@ class User extends Model {
     }
 
     players = []
+    chat    = []
 
     constructor(id, date_created, date_updated,
-        table, table_size, player_turn, player_spec, players, state, winner) {
+        table, table_size, player_turn, player_spec, players, state, winner, chat) {
         super()
         this.id           = id || Utilities.keyGenID('session', 5)
         this.date_created = date_created || new Date()
@@ -168,6 +169,7 @@ class User extends Model {
         this.winner      = winner
         this.player_spec = player_spec
         this.state       = state || GameState.setplayer
+        this.chat        = chat  || []
     }
 
     toObject() {
@@ -181,7 +183,10 @@ class User extends Model {
             winner      : this.winner,
             player_spec : this.player_spec,
             state       : this.state,
-            players     : this.players
+            players     : this.players,
+            chat        : this.chat.map((chat) => {
+              return chat.toObject()
+            })
         }
     }
 
@@ -201,6 +206,9 @@ class User extends Model {
             session.player_spec  = object.player_spec
             session.state        = object.state
             session.players      = object.players
+            session.chat         = (object.chat || []).map((chatobj) => {
+              return UserMessage.parse(chatobj)
+            })
         return session
     }
 } //Session
