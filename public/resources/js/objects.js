@@ -197,3 +197,49 @@ GameState = {
         return session
     }
 } //Session
+
+
+
+/**
+ * class contains all chat
+ */
+ class UserMessage extends Model {
+
+    message = ""
+    user_id 
+
+    constructor(id, date_created, date_updated,
+        user_id, message) {
+        super()
+        this.id = id || Utilities.keyGenID('message', 5)
+        this.date_created = date_created || new Date()
+        this.date_updated = date_updated || new Date()
+        this.user_id = user_id || ""
+        this.message = message || ""
+    }
+
+    toObject() {
+        return {
+            id: this.id,
+            date_created: this.date_created,
+            date_updated: this.date_updated,
+            user_id: this.user_id,
+            message: this.message,
+        }
+    }
+
+    copy() {
+        return UserMessage.parse(this.toObject())
+    }
+
+    static parse(object) {
+        let userMessage = new UserMessage()
+        userMessage.id = object.id
+        userMessage.date_created = object.date_created
+        userMessage.date_updated = object.date_updated
+        userMessage.user_id = object.user_id
+        userMessage.message = object.message
+        return userMessage
+    }
+
+}
