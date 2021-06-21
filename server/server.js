@@ -4,7 +4,7 @@ const http      = require('http')
 const socketIO  = require('socket.io')
 
 const {User, Message, Session} = require('../__global/js/objects')
-const {Game} = require('./game')
+const {Game, Lobby} = require('./game')
 const {Utilites} = require('../__global/js/utilities')
 
 const publicPath = path.join(__dirname + "/../public")
@@ -20,14 +20,15 @@ server.listen(port, () => {
     console.log(`Server is up on port ${port}`)
 })
 
-let game = new Game()
+let lobby = new Lobby()
 
 io.on('connection', (socket) => {
     console.log('a new user just connected')
 
     socket.on('createUser', (data) => {
         var message = new Message()
-        if (game.users.length < 2) {
+        
+        /*if (game.users.length < 2) {
             let user        = new User()
             user.username   = data.username
             game.addUser(user)
@@ -36,32 +37,38 @@ io.on('connection', (socket) => {
         } else {
             message.error = "game lobby occupied"
             socket.emit('onUserCreated', message)
-        }
+        }*/
 
-        let userconnected   = new Message()
+        /*let userconnected   = new Message()
         userconnected.data  = game.users
         io.emit("lobbyUsers", userconnected)
-        console.log("lobby users %o", game.users )
-    })
+        console.log("lobby users %o", game.users )*/
+    })//createUser
 
 
     socket.on('createSession', (session) => {
         console.log("session created %o", session)
-        game.updateSession(Session.parse(session))
-        console.log(game.session.toObject())
-        let sessionMessage = new Message()
-        sessionMessage.data = game.session.toObject()
+        let _session = Session.parse(session)
+        lobby.updateSession(_session)
+        //console.log(lobby.session.toObject())
+        let sessionMessage  = new Message()
+        sessionMessage.data = _session
         
         io.emit('onSession', sessionMessage)
 
         
-        if (session.winner) {
-            let winnerMessage = new Message()
-            winnerMessage.data =  session.winner
+        if (_session.winner) {
+            let winnerMessage   = new Message()
+            winnerMessage.data  = _session.winner
             io.emit('onWinner', winnerMessage)
-            game.session = new Session()
+            
+            _session.reset()
+            let sessionMessage  = new Message()
+            sessionMessage.data = _session
+            io.emit('onSession', sessionMessage)
+            //game.session = new Session()
         }
-    })
+    })//createSession
 
     socket.on('removeUser', (user) => {
         let index = game.users.findIndex((_user) => {
@@ -73,7 +80,7 @@ io.on('connection', (socket) => {
         }
         
         game.session = new Session()
-    })
+    })//removeUser
 
 
     let userconnected   = new Message()
@@ -87,6 +94,6 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () =>{
         console.log('user was disconnected')
-    })
+    })//disconnect
 })
 
