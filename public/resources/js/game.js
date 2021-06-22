@@ -4,7 +4,9 @@ const app = new Vue({
         user    : null,
         users   : [],
         session : new Session(),
-        socket: io(),
+        socket  : io(),
+        connected : false,
+        input_text: ""
     },
     methods: {
 
@@ -46,6 +48,10 @@ const app = new Vue({
             }
         },
 
+        toggleChat(isOpen){
+          document.getElementById("sidebar").style.width = isOpen ? "350px" : "0";
+        },
+
         getCurrPlayer(){
 
             console.log("session %o", this.session)
@@ -74,7 +80,7 @@ const app = new Vue({
         onTossCoin() {
 
             console.log(this.session)
-
+              /// 0 -> 1 , 0.5 * 2 = 0.9 = 1
             var x = (Math.floor(Math.random() * 2) == 0);
             if (x) {
                 this.session.player_spec = {
@@ -289,6 +295,23 @@ const app = new Vue({
             return 0
 
         }, //checker
+        sendmessage(){
+          let text = this.input_text
+          let message = new UserMessage()
+          message.message = text
+          message.user_id = this.user.id
+          this.session.chat.push(message)
+          this.onUpdateSession()
+          this.input_text = ""
+
+        },
+        getuser(id){
+          let user = this.users.find((user) => {
+            return user.id = id
+          })
+            return user
+        }
+      
 
     }
 
