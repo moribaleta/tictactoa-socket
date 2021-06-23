@@ -55,7 +55,7 @@ class Lobby {
      * @param {*} game - Session class type
      */
     addGameSession(session) {
-        this.sessions.push(sessions)
+        this.sessions.push(session)
     }//addGameSession
 
     updateSession(session) {
