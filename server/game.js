@@ -54,12 +54,12 @@ class Lobby {
      * adds a new game session to the array games
      * @param {*} game - Session class type
      */
-    addGameSession(game) {
-        this.games.push(game)
+    addGameSession(session) {
+        this.sessions.push(sessions)
     }//addGameSession
 
     updateSession(session) {
-        const index = this.session.findIndexById(session.id)
+        const index = this.sessions.findIndexById(session.id)
         if (index > -1) {
             this.sessions[index] = session
         }
@@ -82,9 +82,9 @@ class Lobby {
      * @param {*} id - id of the game to be removed
      */
     removeGameById(id) {
-        const index = this.games.findIndex(id)
+        const index = this.sessions.findIndex(id)
         if (index > -1) {
-            this.games.splice(index, 1)
+            this.sessions.splice(index, 1)
         }
     }//removeGameById
 
@@ -144,6 +144,5 @@ Array.prototype.findById = (id) => {
 
 
 module.exports = {
-    Game,
     Lobby
 }
