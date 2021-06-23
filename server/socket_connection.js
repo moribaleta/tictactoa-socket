@@ -39,6 +39,7 @@ class SocketConnect {
         client.on(socket_events.createUser, (data) => {
             let user        = new User()
             user.username   = data.username
+            let message     = new Message()
             message.data    = user.toObject()
             client.emit('onUserCreated', message)    
             this.lobby.addUser(user)

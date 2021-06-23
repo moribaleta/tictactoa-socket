@@ -2,6 +2,7 @@ const app = new Vue({
   el: '#app',
   data: {
     username: "",
+    user: {},
     users: [],
     socket: io(),
     connected: false,
@@ -19,26 +20,28 @@ const app = new Vue({
         console.log("disconnected from the server")
         this.connected = false
       })
-      
-      this.socket.on('onUserCreated', (message) => {
-        console.log(message)
-        if (message.error) {
-          alert(message.error)
-        } else {
-          this.openGame(message.data)
-        }
-      })
 
-      this.socket.on('lobbyUsers', (message) => {
-        this.users = message.data || [];
-      })
-
-      let user = localStorage.getItem('user') || "{}"
-
-      if (user != "{}") {
-        let _user = JSON.parse(user)
-        this.openGame(_user)
+      let _user = localStorage.getItem('user') || "{}"
+      console.log(_user)
+      if (_user != "{}") {
+          this.user = User.parse(JSON.parse(_user))
+          console.log("user %o", this.user)
+          this.fetchData()
+      } else {
+          window.open("index.html",'_self')
       }
+    },
+
+    fetchData() {
+      $.get('/api/users')
+      .then((res) => {
+        console.log(res)
+        this.users = res.users
+      }).catch((err) => {
+        console.log(err)
+      })
+
+      
     },
 
     openGame(user) {

@@ -100,13 +100,36 @@ class Lobby {
      * removes the user from the array by userid
      * @param {*} id 
      */
-    removeUser(id) {
+    logoutUser(id) {
         const index = this.users.findIndex(id)
+
+        this.sessions.forEach((session) => {
+          this.removeUserFromSession(session.id, id)
+        })
 
         if(index > -1) {
             this.users.splice(index, 1)
         }
     }//removeUser
+
+
+    /**
+     * removes the player from the specified session
+     * @returns user from the session removed else null
+     * @param {*} session_id - id of the session
+     * @param {*} user_id - id of the user to be removed
+     */
+    removeUserFromSession(session_id, user_id) {
+      let session = this.sessions.findById(session_id)
+      if(session) {
+        let index = session.players.findIndexById(user_id)
+        if (index > -1) {
+          return session.players.splice(index, 1)
+        }
+      }
+      return null
+    }//removeUserFromSession
+    
 
     /**
      * returns the user from the array by id

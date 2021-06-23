@@ -11,28 +11,22 @@
     </link>
     <script src="resources/bootstrap/js/bootstrap.min.js"></script>
     <script src="resources/js/vue.js"></script>
+    <script src="resources/js/objects.js"></script>
+    <script src="resources/js/utilities.js"></script>
     <script src="socket.io/socket.io.js"></script>
 </head>
 
 <body>
     <div id="app" class="login-input-container">
-        <h2>Welcome</h2>
-        <h1>TictacTo-a</h1>
-        <p>A Simple Tictactoe game</p>
-        
-        <label>Enter your username</label>
-        <input class="input-text" type="text" v-model="username"></input>
-        <button class="input-button" v-on:click="onCreateUser()">Start Game</button>
-        <p>Connected to the Server: {{connected}}</p>
-
         <ul class="group-list">
             <li class="group-list-item" v-for="user,index in users">
                 <p>{{index + 1}}. {{user.username}}</p>
             </li>
         </ul>
     </div>
+    
 
-    <script src="resources/js/index.js"></script>
+    <script src="resources/js/lobby.js"></script>
 </body>
 
 </html>

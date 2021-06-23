@@ -8,13 +8,22 @@ class Route {
         this.app = app
         this.socketconnection = socketconnection
 
+        //https://tictactoa-socket.moribaleta.repl.co/api/lobbies?id=123&count=10
         this.app
             .get('/api/lobbies', (req, res, next) => {
-                console.log(req.query)
+                console.log("user request %o", req.query)
                 res.json({
                     session: socketconnection.lobby.sessions
                 })
             })
+
+        this.app
+          .get('/api/users', (req, res, next) => {
+            console.log(req.query)
+                res.json({
+                    users: socketconnection.lobby.users
+                })
+          })
 
         this.app
             .post('/api/createSession', (req, res, next) => {
