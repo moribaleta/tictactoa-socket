@@ -1,30 +1,6 @@
 const {Session} = require('../__global/js/objects')
 const {Utilities} = require('../__global/js/utilities')
 
-/*class Game {
-
-    id
-
-    users = [
-        ///User objects
-    ]
-
-    session = new Session()
-
-    constructor() {
-        this.id = Utilities.keyGenID('game', 3)
-    }
-    
-    addUser(user) {
-        this.users.push(user)
-    }
-
-    updateSession(session) {
-        this.session = session
-    }
-}*/
-
-
 class Lobby {
 
     /**

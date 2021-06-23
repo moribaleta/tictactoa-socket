@@ -1,4 +1,4 @@
-const {Session} = require('../__global/js/objects');
+const {Session, User, Message} = require('../__global/js/objects');
 
 class Route {
     app
@@ -17,8 +17,32 @@ class Route {
             })
 
         this.app
+            .get('/api/users', (req, res, next) => {
+                console.log(req.query)
+                res.json({
+                    session: socketconnection.lobby.users
+                })
+            })
+
+        this.app
+            .post('/api/createUser', (req, res, next) => {
+
+                console.log("createUser %o", req.query)
+
+                let query         = req.query
+                let username      = query.username
+                let user          = new User()
+                    user.username = username
+                socketconnection.lobby.addUser(user)
+
+                let message     = new Message()
+                message.data    = user.toObject()
+                res.json(message)
+            })
+
+        this.app
             .post('/api/createSession', (req, res, next) => {
-                let query       = req.query
+                let query       = req.params
                 let user_id     = query.user_id
                 let session     = new Session()
                 session.name    = query.name

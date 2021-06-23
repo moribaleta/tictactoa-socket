@@ -46,14 +46,25 @@ const app = new Vue({
       let _user = JSON.stringify(user)
       console.log(_user)
       localStorage.setItem('user', _user)
-      window.open('game.html','_self')
+      window.open('lobby.html','_self')
     },
 
     onCreateUser() {
       if (this.username.length > 0) {
-        this.socket.emit('createUser', {
+        /*this.socket.emit('createUser', {
           username: this.username
-        })
+        })*/
+        let object = {
+          username: this.username
+        }
+
+        $.post('/api/createUser', object)
+          .then((message) => {
+            this.openGame(message.data)
+          }).catch((err) => {
+            console.log(err)
+          })
+
       } else {
         alert("you need a username")
       }
