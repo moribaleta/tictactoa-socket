@@ -4,7 +4,9 @@ const app = new Vue({
     username: "",
     user: {},
     users: [],
+    sessions: [],
     socket: io(),
+    session_input : {},
     connected: false,
   },
 
@@ -41,7 +43,13 @@ const app = new Vue({
         console.log(err)
       })
 
-      
+      $.get('/api/sessions')
+      .then((res) => {
+        console.log(res)
+        this.sessions = res.sessions
+      }).catch((err) => {
+        console.log(err)
+      })
     },
 
     openGame(user) {
@@ -52,16 +60,28 @@ const app = new Vue({
       window.open('lobby.html','_self')
     },
 
-    onCreateUser() {
-      if (this.username.length > 0) {
-        this.socket.emit('createUser', {
-          username: this.username
-        })
-      } else {
-        alert("you need a username")
-      }
+    onCreateGame(){
+      $('#newGameModal').modal()
+      this.session_input = new Session()
     },
 
+    onSaveGame(){
+      
+      this.session_input.players.push(this.user.id)
+
+      let object = {
+        user_id : this.user.id,
+        session : this.session_input.toObject()
+      }
+
+      $.post('/api/createSession', object)
+        .then((res) => {
+          console.log(res)
+          window.open('game.html','_self')
+        }).catch((err) => {
+          console.log(err)
+        })
+    }
   
 
   }

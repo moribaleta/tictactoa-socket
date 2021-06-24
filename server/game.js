@@ -23,7 +23,7 @@ class Lobby {
      * @param {*} id - id of the game session to retrieve
      */
     getSessionByID(id) {
-        return this.sessions.findById(id)
+        return this.sessions.findArrayById(id)
     }//getGameSessionByID
 
     /**
@@ -35,7 +35,7 @@ class Lobby {
     }//addGameSession
 
     updateSession(session) {
-        const index = this.sessions.findIndexById(session.id)
+        const index = this.sessions.findArrayIndexById(session.id)
         if (index > -1) {
             this.sessions[index] = session
         }
@@ -46,7 +46,7 @@ class Lobby {
      * @param {*} session 
      */
     resetSession(session) {
-        let index = this.sessions.findIndexById(session.id)
+        let index = this.sessions.findArrayIndexById(session.id)
         if (index > -1) {
             let session = this.sessions[index]
             session.reset()
@@ -58,7 +58,7 @@ class Lobby {
      * @param {*} id - id of the game to be removed
      */
     removeGameById(id) {
-        const index = this.sessions.findIndex(id)
+        const index = findArrayIndexById(this.sessions, id)
         if (index > -1) {
             this.sessions.splice(index, 1)
         }
@@ -77,7 +77,7 @@ class Lobby {
      * @param {*} id 
      */
     logoutUser(id) {
-        const index = this.users.findIndex(id)
+        const index = findArrayIndexById(this.users, id)
 
         this.sessions.forEach((session) => {
           this.removeUserFromSession(session.id, id)
@@ -96,9 +96,9 @@ class Lobby {
      * @param {*} user_id - id of the user to be removed
      */
     removeUserFromSession(session_id, user_id) {
-      let session = this.sessions.findById(session_id)
+      let session = findArrayById(this.sessions, session_id)
       if(session) {
-        let index = session.players.findIndexById(user_id)
+        let index = findArrayIndexById(session.players, user_id)
         if (index > -1) {
           return session.players.splice(index, 1)
         }
@@ -113,7 +113,9 @@ class Lobby {
      * @returns User
      */
     getUser(id) {
-        return this.users.findById(id)
+        //return this.users.findArrayById(id)
+        let index = findArrayIndexById(this.users, id)
+        return index > -1 ? this.users[index] : null
     }//getUser
 
 }//Lobby
@@ -124,8 +126,8 @@ class Lobby {
  * @param {*} id 
  * @returns index of object from the array
  */
-Array.prototype.findIndexById = (id) => {
-    return this.findIndex((object) => {
+const findArrayIndexById = (arr, id) => {
+    return arr.findIndex((object) => {
         return object.id == id
     })
 }
@@ -135,8 +137,8 @@ Array.prototype.findIndexById = (id) => {
  * @param {*} id 
  * @returns Any
  */
-Array.prototype.findById = (id) => {
-    return this.find((object) => {
+const findArrayById = (arr, id) => {
+    return arr.find((object) => {
         return object.id == id
     })
 }

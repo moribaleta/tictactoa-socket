@@ -1,4 +1,8 @@
-const {Session, User, Message} = require('../__global/js/objects');
+const {
+    Session,
+    User,
+    Message
+} = require('../__global/js/objects');
 
 class Route {
     app
@@ -8,11 +12,17 @@ class Route {
         this.app = app
         this.socketconnection = socketconnection
 
+        this.utilityOperations()
+        this.sessionOperations()
+        this.userOperations()
+    }
+
+    utilityOperations() {
         this.app
-            .get('/api/lobbies', (req, res, next) => {
+            .get('/api/sessions', (req, res, next) => {
                 console.log(req.query)
                 res.json({
-                    session: socketconnection.lobby.sessions
+                    session: this.socketconnection.lobby.sessions
                 })
             })
 
@@ -20,44 +30,50 @@ class Route {
             .get('/api/users', (req, res, next) => {
                 console.log(req.query)
                 res.json({
-                    session: socketconnection.lobby.users
+                    users: this.socketconnection.lobby.users
                 })
             })
+    }
 
-        this.app
-            .post('/api/createUser', (req, res, next) => {
-
-                console.log("createUser %o", req.query)
-
-                let query         = req.query
-                let username      = query.username
-                let user          = new User()
-                    user.username = username
-                socketconnection.lobby.addUser(user)
-
-                let message     = new Message()
-                message.data    = user.toObject()
-                res.json(message)
-            })
-
+    sessionOperations() {
         this.app
             .post('/api/createSession', (req, res, next) => {
-                let query       = req.params
-                let user_id     = query.user_id
-                let session     = new Session()
-                session.name    = query.name
+                console.log("createSession %o", req.body)
+                let query        = req.body
+                let user_id      = query.user_id
+                let session      = new Session()
+                    session.name = query.name
 
-                let user = socketconnection.lobby.getUser(user_id)
+                let user = this.socketconnection.lobby.getUser(user_id)
 
                 if (user) {
                     session.players = user
                 }
-                socketconnection.lobby.addGameSession(session)
+                this.socketconnection.lobby.addGameSession(session)
                 res.json({
                     session
                 })
+                this.socketconnection.emitUserList()
             })
+    }
 
+    userOperations() {
+        this.app
+            .post('/api/createUser', (req, res, next) => {
+
+                console.log("createUser %o", req.body)
+
+                let query         = req.body
+                let username      = query.username
+                let user          = new User()
+                    user.username = username
+                this.socketconnection.lobby.addUser(user)
+
+                let message = new Message()
+                message.data = user.toObject()
+                this.socketconnection.emitUserList()
+                res.json(message)
+            })
     }
 
 }

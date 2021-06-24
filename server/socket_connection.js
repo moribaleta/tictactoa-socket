@@ -12,6 +12,8 @@ const socket_events = {
     disconnect   : 'disconnect',
     getSession   : 'getSession',
     quitSession  : 'quitSession',
+    userlist     : 'userlist',
+    sessionlist  : 'sessionlist'
 }
 
 class SocketConnect {
@@ -26,6 +28,18 @@ class SocketConnect {
             console.log('a new user just connected')
             this.setupClient(client)
         })
+    }
+
+    emitUserList() {
+        let message = new Message()
+        message.data = this.lobby.users
+        this.io.emit(socket_events.userlist, message)
+    }
+
+    emitSessionList(){
+        let message = new Message()
+        message.data = this.lobby.sessions
+        this.io.emit(socket_events.sessionlist, message)
     }
 
     setupClient(client){

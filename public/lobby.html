@@ -18,13 +18,41 @@
 
 <body>
     <div id="app" class="login-input-container">
-        <ul class="group-list">
-            <li class="group-list-item" v-for="user,index in users">
+
+        <div id="newGameModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Create Game</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Enter Name of Session</p>
+                        <input type="text" class="input-text" v-model="session_input.name" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                            v-on:click="onSaveGame()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul class="list-group">
+            <li class="list-group-item" v-for="user,index in users">
                 <p>{{index + 1}}. {{user.username}}</p>
             </li>
         </ul>
+
+        <ul class="list-group">
+            <li class="list-group-item" v-for="session,index in sessions">
+                <p>{{index + 1}}. {{session.name}}</p>
+            </li>
+        </ul>
+        <button class="input-button" v-on:click="onCreateGame()">Create Game</button>
     </div>
-    
+
 
     <script src="resources/js/lobby.js"></script>
 </body>
