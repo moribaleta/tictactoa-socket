@@ -23,6 +23,12 @@ const app = new Vue({
         this.connected = false
       })
 
+      /*
+      this.socket.on('sessionlist', (message) => {
+        console.log("message %o", message)
+        this.sessions = [...message.data]
+      })*/
+
       let _user = localStorage.getItem('user') || "{}"
       console.log(_user)
       if (_user != "{}") {
@@ -46,10 +52,17 @@ const app = new Vue({
       $.get('/api/sessions')
       .then((res) => {
         console.log(res)
-        this.sessions = res.sessions
+        this.sessions = [...res.session]
       }).catch((err) => {
         console.log(err)
       })
+
+      /*for(var i = 0; i< 4; i++) {
+        let session = new Session()
+        session.name = "session 1" + i 
+        this.sessions.push(session)
+      }*/
+
     },
 
     openGame(user) {
@@ -77,11 +90,49 @@ const app = new Vue({
       $.post('/api/createSession', object)
         .then((res) => {
           console.log(res)
-          window.open('game.html','_self')
+          //window.open('game.html','_self')
         }).catch((err) => {
           console.log(err)
         })
+    },
+
+  onLogOut() {
+    localStorage.setItem('user', '{}')
+      this.socket.emit('removeUser', this.user)
+        window.open("index.html",'_self')
+  }, 
+
+
+  onJoinGame(index){
+  var user_id = this.user.id
+  let session = this.sessions[index]
+
+   if(session.players.length<2){
+    let isAccept = confirm("Do you want to join game?")
+    if(isAccept==true){
+      let request = {
+        user_id   : user_id,
+        session_id: session.id
+      }
+      $.post('/api/joinSession',request)
+        .then((res) => { 
+          console.log(res)
+          if (res.error) {
+            throw res.error
+          } else {
+            
+          }
+          
+        }).catch((err) => {
+          alert(err)
+        })
     }
+   } else{
+     alert("Game session is full")
+   }  
+   
+
+  }
   
 
   }

@@ -120,10 +120,7 @@ GameState = {
     finish : "finish"
 }
 
-/**
- * class contains the game session
- */
- class Session extends Model {
+class Session extends Model {
     table      = []
     table_size = {
         row: 3,
@@ -144,13 +141,20 @@ GameState = {
     players = []
     chat    = []
 
+    chat    = []
+    name
+
     constructor(id, date_created, date_updated,
-        table, table_size, player_turn, player_spec, players, state, winner, chat) {
+        name, table, table_size, player_turn, player_spec,
+        players, state, winner, chat) {
+
         super()
         this.id           = id || Utilities.keyGenID('session', 5)
         this.date_created = date_created || new Date()
         this.date_updated = date_updated || new Date()
-        this.table        = table || []
+
+        this.name         = name    || ""
+        this.table        = table   || []
         this.players      = players || []
 
         this.table_size   = table_size || {
@@ -165,11 +169,23 @@ GameState = {
         this.chat        = chat  || []
     }
 
+    reset() {
+        this.state          = GameState.create
+        this.winner         = null
+        this.player_turn    = 1
+        this.table          = []
+        this.table_size     = {
+            row: 0,
+            col: 0
+        }
+    }
+
     toObject() {
         return {
             id          : this.id,
             date_created: this.date_created,
             date_updated: this.date_updated,
+            name        : this.name,
             table       : this.table,
             table_size  : this.table_size,
             player_turn : this.player_turn,
@@ -192,6 +208,7 @@ GameState = {
             session.id           = object.id
             session.date_created = object.date_created
             session.date_updated = object.date_updated
+            session.name         = object.name
             session.table        = object.table
             session.table_size   = object.table_size
             session.player_turn  = object.player_turn

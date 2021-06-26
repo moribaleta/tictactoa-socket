@@ -23,7 +23,7 @@ class Lobby {
      * @param {*} id - id of the game session to retrieve
      */
     getSessionByID(id) {
-        return this.sessions.findArrayById(id)
+        return findArrayById(this.sessions, id)
     }//getGameSessionByID
 
     /**
@@ -32,10 +32,11 @@ class Lobby {
      */
     addGameSession(session) {
         this.sessions.push(session)
+        console.log("addGameSession %o", this.sessions)
     }//addGameSession
 
     updateSession(session) {
-        const index = this.sessions.findArrayIndexById(session.id)
+        const index = findArrayIndexById(this.sessions, session.id)
         if (index > -1) {
             this.sessions[index] = session
         }
@@ -46,7 +47,7 @@ class Lobby {
      * @param {*} session 
      */
     resetSession(session) {
-        let index = this.sessions.findArrayIndexById(session.id)
+        let index = findArrayIndexById(this.sessions, session.id)
         if (index > -1) {
             let session = this.sessions[index]
             session.reset()

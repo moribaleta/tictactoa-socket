@@ -39,18 +39,27 @@
             </div>
         </div>
 
+        <!-- users -->
         <ul class="list-group">
             <li class="list-group-item" v-for="user,index in users">
                 <p>{{index + 1}}. {{user.username}}</p>
             </li>
         </ul>
-
+         <button v-on:click="onLogOut()">Log out</button>
+        <!-- /users -->
+        <!-- lobbies -->
         <ul class="list-group">
             <li class="list-group-item" v-for="session,index in sessions">
                 <p>{{index + 1}}. {{session.name}}</p>
+          <button class="name-button"
+          v-on:click="onJoinGame(index)">Join Game</button>
+          <p>{{session.players.length}}</p>
+        
             </li>
         </ul>
+        <!-- /lobbies -->
         <button class="input-button" v-on:click="onCreateGame()">Create Game</button>
+        
     </div>
 
 
