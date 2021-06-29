@@ -27,6 +27,14 @@ class Lobby {
     }//getGameSessionByID
 
     /**
+     * returns the game session
+     * @param {*} id - id of the game session to retrieve
+     */
+     getSession(id) {
+        return findArrayById(this.sessions, id)
+    }//getGameSessionByID
+
+    /**
      * adds a new game session to the array games
      * @param {*} game - Session class type
      */
@@ -115,8 +123,7 @@ class Lobby {
      */
     getUser(id) {
         //return this.users.findArrayById(id)
-        let index = findArrayIndexById(this.users, id)
-        return index > -1 ? this.users[index] : null
+        return findArrayById(this.users, id)
     }//getUser
 
 }//Lobby

@@ -5,6 +5,7 @@ const app = new Vue({
     users: [],
     socket: io(),
     connected: false,
+    socket_id: null,
   },
 
   methods: {
@@ -13,6 +14,11 @@ const app = new Vue({
       this.socket.on("connect", () => {
         console.log("connected to the server")
         this.connected = true;
+      })
+
+      this.socket.on("socketid",(socket_id) => {
+        console.log("socket id %o", socket_id)
+        this.socket_id = socket_id
       })
       
       this.socket.on('disconnect', () => {
@@ -55,7 +61,8 @@ const app = new Vue({
           username: this.username
         })*/
         let object = {
-          username: this.username
+          username: this.username,
+          socket_id: this.socket_id,
         }
 
         $.post('/api/createUser', object)

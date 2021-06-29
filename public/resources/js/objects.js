@@ -74,17 +74,19 @@ class Lobby extends Model {
  * user object extends Model
  * has username
  */
-class User extends Model {
+ class User extends Model {
 
     username
+    socket_id
 
     constructor(id, date_created, date_updated,
-        username) {
+        username, socket_id) {
         super()
-        this.id           = id || Utilities.keyGenID('user', 5)
+        this.id = id || Utilities.keyGenID('user', 5)
         this.date_created = date_created || new Date()
         this.date_updated = date_updated || new Date()
-        this.username     = username || ""
+        this.username   = username  || ""
+        this.socket_id  = socket_id || ""
     }
 
     toObject() {
@@ -92,7 +94,8 @@ class User extends Model {
             id          : this.id,
             date_created: this.date_created,
             date_updated: this.date_updated,
-            username    : this.username
+            username    : this.username,
+            socket_id   : this.socket_id
         }
     }
 
@@ -106,6 +109,7 @@ class User extends Model {
             user.date_created = object.date_created
             user.date_updated = object.date_updated
             user.username     = object.username
+            user.socket_id    = object.socket_id
         return user
     }
 

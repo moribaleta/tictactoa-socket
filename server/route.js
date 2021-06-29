@@ -24,7 +24,7 @@ class Route {
                 res.json({
                     session: this.socketconnection.lobby.sessions
                 })
-            })
+            })//sessions
 
         this.app
             .get('/api/users', (req, res, next) => {
@@ -32,8 +32,8 @@ class Route {
                 res.json({
                     users: this.socketconnection.lobby.users
                 })
-            })
-    }
+            })//users
+    }//utilityOperations
 
     sessionOperations() {
         this.app
@@ -44,30 +44,34 @@ class Route {
                 var session      = new Session()
                     session.name = query.session.name
 
-                /*let user = this.socketconnection.lobby.getUser(user_id)
+                let user = this.socketconnection.lobby.getUser(user_id)
 
                 if (user) {
                     session.players = [user]
-                }*/
+                }
+
                 this.socketconnection.lobby.addGameSession(session)
-                res.json({
-                    session
-                })
-                this.socketconnection.emitUserList()
-            })
+
+                let message = new Message()
+                message.data = session.toObject()
+                res.json(message)
+                this.socketconnection.emitSessionList()
+            })//createSession
       
         this.app
           .post('/api/joinSession', (req, res, next) => {
-             let query = req.query
+             let query = req.body
              let user_id = query.user_id
              let session_id = query.session_id
+
+             console.log(query)
 
              let session  = this.socketconnection.lobby.getSessionByID(session_id)
              let user     = this.socketconnection.lobby.getUser(user_id)
             
             let message = new Message()
              if(session && user) {
-               session.players.push(user)
+                session.players.push(user)
                 message.data = session.toObject()
              } else if (!session) {
                message.error = "session doesnt exist"
@@ -78,8 +82,28 @@ class Route {
              }
             
              res.json(message)
-          })
-    }
+             this.socketconnection.emitSessionList(session.id)
+          })//joinSession
+
+        this.app
+          .get('/api/getSession', (req, res, next) => {
+              let query = req.query
+              let session_id = query.session_id
+              console.log("getSession %o", req.params)
+
+              let session = this.socketconnection.lobby.getSessionByID(session_id)
+
+              var message = new Message()
+
+              if (session) {
+                message.data = session.toObject()
+              } else {
+                message.error = "Session doesnt exist"
+              }
+              res.json(message)
+          })//getSession
+
+    }//sessionOperations
 
     userOperations() {
         this.app
@@ -87,10 +111,10 @@ class Route {
 
                 console.log("createUser %o", req.body)
 
-                let query         = req.body
-                let username      = query.username
-                let user          = new User()
-                    user.username = username
+                let query          = req.body
+                let user           = new User()
+                    user.username  = query.username
+                    user.socket_id = query.socket_id
                 this.socketconnection.lobby.addUser(user)
 
                 let message = new Message()
@@ -98,7 +122,7 @@ class Route {
                 this.socketconnection.emitUserList()
                 
                 res.json(message)
-            })
+            })//createUser
 
         this.app
           .get('/api/getUserById', (req, res, next) => {
@@ -108,11 +132,14 @@ class Route {
             let message   = new Message()
             message.data  = null
             if (user) {
-              message.data = user.toObject()
+                message.data = user.toObject()
+            } else {
+                message.error = "user not found"
             }
             res.json(message)
-          })
-    }
+          })//getUserById
+
+    }//userOperations
 
 }
 

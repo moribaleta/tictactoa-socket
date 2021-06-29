@@ -43,10 +43,61 @@ const app = new Vue({
             if (_user != "{}") {
                 this.user = User.parse(JSON.parse(_user))
                 console.log("user %o", this.user)
+                this.validateUser(this.user.id)
             } else {
                 window.open("index.html",'_self')
+                return 
             }
         },
+
+        validateUser(id) {
+            $.get('/api/getUserById', {id})
+                .then((res) => {
+                    if (res.error) {
+                        throw res.error
+                    } else {
+                        this.user = User.parse(res.data)
+                        return true
+                    }                    
+                })
+                .then((val) => {
+                    let params      = (new URL(document.location)).searchParams;
+                    let session_id  = params.get("session_id");
+                    this.getSession(session_id)
+                })
+                .catch((err) => {
+                    alert(err)
+                    window.open("index.html", "_self")
+                })
+        },//validateUser
+
+        getSession(session_id){
+            console.log("session_id: "+ session_id)
+            $.get('/api/getSession', {session_id})
+                .then((res) => {
+                    if (res.error) {
+                        throw res.error
+                    } else {
+                        return Session.parse(res.data) 
+                    }
+                }).then((session) =>{
+                    this.session = session
+                    let player = this.session.players.find((player) => {
+                        return player.id = this.user.id 
+                    })
+
+                    if (player) {
+                        console.log("player session valid")
+                    } else {
+                        throw "Invalid user session"
+                    }
+
+                }).catch((err) => {
+                    console.log(err)
+                    alert(JSON.stringify(err))
+                    //window.open("lobby.html", "_self")
+                })
+        },//getSession
 
         toggleChat(isOpen){
           document.getElementById("sidebar").style.width = isOpen ? "350px" : "0";
