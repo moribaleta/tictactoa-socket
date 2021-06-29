@@ -10,6 +10,15 @@ class Message {
     data
     /** contains error if any */
     error
+
+    constructor(data, error) {
+        this.data   = data
+        this.error  = error
+    }
+
+    static create(data) {
+        return new Message(data)
+    }
 } //Message
 
 /**
@@ -81,22 +90,25 @@ class Lobby extends Model {
 class User extends Model {
 
     username
+    socket_id
 
     constructor(id, date_created, date_updated,
-        username) {
+        username, socket_id) {
         super()
         this.id = id || Utilities.keyGenID('user', 5)
         this.date_created = date_created || new Date()
         this.date_updated = date_updated || new Date()
-        this.username = username || ""
+        this.username   = username  || ""
+        this.socket_id  = socket_id || ""
     }
 
     toObject() {
         return {
-            id: this.id,
+            id          : this.id,
             date_created: this.date_created,
             date_updated: this.date_updated,
-            username: this.username
+            username    : this.username,
+            socket_id   : this.socket_id
         }
     }
 
@@ -105,11 +117,12 @@ class User extends Model {
     }
 
     static parse(object) {
-        let user = new User()
-        user.id = object.id
-        user.date_created = object.date_created
-        user.date_updated = object.date_updated
-        user.username = object.username
+        let user              = new User()
+            user.id           = object.id
+            user.date_created = object.date_created
+            user.date_updated = object.date_updated
+            user.username     = object.username
+            user.socket_id    = object.socket_id
         return user
     }
 
