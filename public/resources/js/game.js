@@ -61,6 +61,13 @@ const app = new Vue({
         setupSessionEvents() {
             this.socket.on('onWinner', (message) => {
                 alert(`Winner player: ${message.data}`)
+
+                if (this.user.id == this.session.player_spec[1].id) {
+                    if (confirm("restart game?")) {
+                        this.session.reset()
+                        this.updateSession()
+                    }
+                }
             })
 
             this.socket.on('updateSession', (message) => {
