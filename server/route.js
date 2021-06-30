@@ -71,7 +71,9 @@ class Route {
             
             let message = new Message()
              if(session && user) {
+                console.log("session players %o", session.players)
                 session.players.push(user)
+                console.log("session players %o", session.players)
                 message.data = session.toObject()
              } else if (!session) {
                message.error = "session doesnt exist"

@@ -58,16 +58,16 @@
         <div class="header-container" v-if="user">
             <label>{{user.username}}</label>
             <ul class="group-list">
-                <li class="group-list-item" v-for="user,index in users">
+                <li class="group-list-item" v-for="user,index in session.players">
                     <p>{{index + 1}}. {{user.username}}</p>
                 </li>
             </ul>
             <button v-on:click="onLogOut()">Log out</button>
         </div>
-        <div class="container" v-if="users.length < 2">
+        <div class="container" v-if="session.players.length < 2">
             <label>Still Waiting for 2nd player</label>
         </div>
-        <div class="container" v-if="users.length >= 2">
+        <div class="container" v-if="session.players.length >= 2">
             <div class="input-container" v-if="session.state == 'setplayer'">
                 <label>Toss coin to designate players</label>
                 <p>{{coin}}</p>

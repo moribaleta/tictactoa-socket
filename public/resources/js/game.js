@@ -1,41 +1,27 @@
 const app = new Vue({
     el: "#app",
     data: {
-        user    : null,
-        users   : [],
-        session : new Session(),
-        socket  : io(),
+        coin      : null,
+        user      : null,
+        session   : null,
+        socket    : io(),
         connected : false,
         input_text: ""
     },
     methods: {
 
         onStart() {
-
-            console.log("session %o", this.session)
-
             this.socket.on("connect", () => {
                 console.log("connected to the server")
                 this.connected = true;
+                if (this.user) {
+                    this.socket.emit('updateclient', {user_id: this.user.id})
+                }
             })
 
             this.socket.on('disconnect', () => {
                 console.log("disconnected from the server")
                 this.connected = false
-            })
-
-            this.socket.on('lobbyUsers', (message) => {
-                this.users = [...message.data || []]
-                console.log(this.users)
-            })
-
-            this.socket.on('onWinner', (message) => {
-                alert(`Winner player: ${message.data}`)
-            })
-
-            this.socket.on('onSession', (message) => {
-                console.log("session %o",message.data)
-                this.session = {... Session.parse(message.data)}
             })
 
             let _user = localStorage.getItem('user') || "{}"
@@ -48,7 +34,7 @@ const app = new Vue({
                 window.open("index.html",'_self')
                 return 
             }
-        },
+        },//onStart
 
         validateUser(id) {
             $.get('/api/getUserById', {id})
@@ -64,12 +50,24 @@ const app = new Vue({
                     let params      = (new URL(document.location)).searchParams;
                     let session_id  = params.get("session_id");
                     this.getSession(session_id)
+                    this.socket.emit('updateclient', {user_id: id})
                 })
                 .catch((err) => {
                     alert(err)
                     window.open("index.html", "_self")
                 })
         },//validateUser
+
+        setupSessionEvents() {
+            this.socket.on('onWinner', (message) => {
+                alert(`Winner player: ${message.data}`)
+            })
+
+            this.socket.on('updateSession', (message) => {
+                console.log("session %o",message.data)
+                this.session = Session.parse(message.data)
+            })
+        },//setupSessionEvents
 
         getSession(session_id){
             console.log("session_id: "+ session_id)
@@ -80,22 +78,24 @@ const app = new Vue({
                     } else {
                         return Session.parse(res.data) 
                     }
-                }).then((session) =>{
+                }).then((session) => {
+                    console.log("session valid %o", session)
                     this.session = session
                     let player = this.session.players.find((player) => {
                         return player.id = this.user.id 
                     })
+
+                    console.log("session %o", this.session)
 
                     if (player) {
                         console.log("player session valid")
                     } else {
                         throw "Invalid user session"
                     }
-
+                    this.setupSessionEvents()
                 }).catch((err) => {
                     console.log(err)
                     alert(JSON.stringify(err))
-                    //window.open("lobby.html", "_self")
                 })
         },//getSession
 
@@ -104,7 +104,6 @@ const app = new Vue({
         },
 
         getCurrPlayer(){
-
             console.log("session %o", this.session)
             if (!this.session) {
                 return ""
@@ -126,22 +125,21 @@ const app = new Vue({
                 return `Player ${turn} turn: ${name}`
             }
             return ""
-        },
+        },//getCurrPlayer
 
         onTossCoin() {
-
             console.log(this.session)
               /// 0 -> 1 , 0.5 * 2 = 0.9 = 1
             var x = (Math.floor(Math.random() * 2) == 0);
             if (x) {
                 this.session.player_spec = {
-                    1: this.users[0],
-                    2: this.users[1]
+                    1: this.session.players[0],
+                    2: this.session.players[1]
                 }
             } else {
                 this.session.player_spec = {
-                    1: this.users[1],
-                    2: this.users[0]
+                    1: this.session.players[1],
+                    2: this.session.players[0]
                 }
             }
             let player1 = this.session.player_spec[1]
@@ -151,8 +149,8 @@ const app = new Vue({
             console.log("on Toss COIN")
             this.session.state = GameState.create
             console.log("session %o", this.session)
-            this.socket.emit('createSession', this.session)
-        },
+            this.onUpdateSession()
+        },//onTossCoin
 
         onStartGame() {
             this.session.table = []
@@ -170,7 +168,7 @@ const app = new Vue({
 
             this.session.state  = GameState.playing
             console.log("session %o", this.session)
-            this.socket.emit('createSession', this.session)
+            this.onUpdateSession()
         }, //onStart
 
         onFinish(result) {
@@ -222,14 +220,14 @@ const app = new Vue({
 
         onUpdateSession() {
             console.log("session %o", this.session)
-            this.socket.emit('createSession', this.session)
-        },
+            this.socket.emit('updateSession', this.session)
+        },//onUpdateSession
 
         onLogOut() {
             localStorage.setItem('user', '{}')
             this.socket.emit('removeUser', this.user)
             window.open("index.html",'_self')
-        }, 
+        },//onLogOut 
 
         checker() {
             const checker_value = this.session.player_turn // 1, 2
@@ -340,12 +338,10 @@ const app = new Vue({
             }
 
             ///----------------
-
-
-
             return 0
-
         }, //checker
+
+        
         sendmessage(){
           let text = this.input_text
           let message = new UserMessage()
@@ -354,14 +350,13 @@ const app = new Vue({
           this.session.chat.push(message)
           this.onUpdateSession()
           this.input_text = ""
+        },//sendmessage
 
-        },
         getuser(id){
-          let user = this.users.find((user) => {
+          return this.session.players.find((user) => {
             return user.id = id
           })
-            return user
-        }
+        }//getuser
       
 
     }
